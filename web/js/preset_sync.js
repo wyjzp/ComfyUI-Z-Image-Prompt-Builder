@@ -819,46 +819,14 @@ app.registerExtension({
       moveWidgetBefore(node, spacer, widgetByName(node, "自由提示词"));
     }
 
-    if (!node.__vividMuseEnableOnlyModuleButton) {
-      node.__vividMuseEnableOnlyModuleButton = addNonSerializedWidget(
-        node,
-        "button",
-        "仅启用当前模块",
-        null,
-        () => enableOnlyModule(node, node.__vividMuseModuleWidget?.value),
-      );
-    }
-
-    if (!node.__vividMuseRandomButton) {
-      addNonSerializedWidget(
-        node, "button", "🎲 生成随机组合", null, () => prepareRandomCombination(node),
-      );
-      node.__vividMuseRandomButton = node.widgets.at(-1);
-    }
-
-    if (node.__vividMuseEnableOnlyModuleButton && node.__vividMuseRandomButton) {
-      const enableIndex = node.widgets.indexOf(node.__vividMuseEnableOnlyModuleButton);
-      const randomIndex = node.widgets.indexOf(node.__vividMuseRandomButton);
-      if (enableIndex < randomIndex) {
-        node.widgets.splice(enableIndex, 1);
-        node.widgets.splice(node.widgets.indexOf(node.__vividMuseRandomButton) + 1, 0, node.__vividMuseEnableOnlyModuleButton);
-      }
-    }
-
-    if (!node.__vividMuseClearStructuredButton) {
-      addNonSerializedWidget(
-        node, "button", "清空结构化模块", null, () => clearStructuredFields(node),
-      );
-      node.__vividMuseClearStructuredButton = true;
-    }
-
-    // "全部清空"按钮已按用户要求移除（调整节点尺寸时容易误触）。
-    // 底部保留一块空白区域，把调整尺寸的手柄和上面的按钮隔开。
+    // "仅启用当前模块"、"🎲 生成随机组合"、"清空结构化模块"、"全部清空"按钮
+    // 均已按用户要求移除（调整节点尺寸时容易误触，会覆盖手动设置的字段）。
+    // 底部保留一块空白区域，把调整尺寸的手柄和上面的控件隔开。
     if (!node.__vividMuseBottomSpacer) {
       const bottomSpacer = addNonSerializedWidget(
         node, "button", "__vividMuseBottomSpacer", null, () => {},
       );
-      bottomSpacer.computeSize = () => [0, 48];
+      bottomSpacer.computeSize = () => [0, 24];
       bottomSpacer.draw = () => {};
       node.__vividMuseBottomSpacer = bottomSpacer;
     }
