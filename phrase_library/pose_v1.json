@@ -89,6 +89,31 @@
           "id": "hand_on_hip",
           "label": "叉腰站立",
           "value": "叉腰站立"
+        },
+        {
+          "id": "lying_side_propped",
+          "label": "侧躺撑头",
+          "value": "侧躺，靠近地面的一侧手臂弯曲撑起头部，身体横向舒展"
+        },
+        {
+          "id": "lying_prone_elbows",
+          "label": "俯卧撑肘",
+          "value": "俯卧，双肘撑地，上半身自然抬起"
+        },
+        {
+          "id": "recline_leaning",
+          "label": "半躺倚靠",
+          "value": "半躺，上身后倚在支撑物上，身体斜向舒展"
+        },
+        {
+          "id": "lying_back_stretch",
+          "label": "仰卧伸展",
+          "value": "仰卧，背部平贴支撑面，身体完全舒展"
+        },
+        {
+          "id": "lying_prone_kick",
+          "label": "趴卧翘腿",
+          "value": "俯卧，上半身自然抬起，小腿向后翘起"
         }
       ]
     },
@@ -188,6 +213,21 @@
           "id": "centered_seated",
           "label": "坐姿重心居中",
           "value": "坐姿重心稳定居中"
+        },
+        {
+          "id": "lying_side",
+          "label": "侧卧重心落在一侧",
+          "value": "侧卧，身体重心自然落在一侧肩胯"
+        },
+        {
+          "id": "lying_front",
+          "label": "俯卧以前臂支撑",
+          "value": "俯卧，上半身重量由前臂稳定支撑"
+        },
+        {
+          "id": "lying_back",
+          "label": "仰卧重心平稳",
+          "value": "仰卧，背部平稳贴合支撑面"
         }
       ]
     },
@@ -543,6 +583,21 @@
           "id": "knee_up",
           "label": "屈膝抱腿",
           "value": "屈膝将腿抱在身前"
+        },
+        {
+          "id": "lying_legs_extended",
+          "label": "双腿自然伸展",
+          "value": "双腿自然伸展，形成舒展的横向线条"
+        },
+        {
+          "id": "lying_legs_bent",
+          "label": "一腿屈膝叠放",
+          "value": "一条腿自然屈膝叠放在另一条腿上"
+        },
+        {
+          "id": "lying_calves_up",
+          "label": "小腿向后翘起",
+          "value": "双膝弯曲，小腿向后轻快翘起"
         }
       ]
     },
@@ -1317,6 +1372,112 @@
           "生活写真",
           "坐姿",
           "直视"
+        ]
+      },
+      {
+        "id": "lying_side_propped_gaze",
+        "label": "侧躺撑头柔和凝视",
+        "fields": {
+          "pose.event": "rest_on_sofa",
+          "pose.base": "lying_side_propped",
+          "pose.body_direction": "left_profile",
+          "pose.weight": "lying_side",
+          "pose.shoulders": "forward_relaxed",
+          "pose.hand_action": "hands_folded_front",
+          "pose.leg_action": "lying_legs_bent",
+          "pose.head_direction": "front",
+          "pose.gaze": "camera_soft",
+          "pose.expression": "lazy"
+        },
+        "tags": [
+          "卧姿",
+          "居家",
+          "横幅"
+        ]
+      },
+      {
+        "id": "lying_prone_elbows_thought",
+        "label": "俯卧撑肘沉思直视",
+        "fields": {
+          "pose.event": "pause_in_thought",
+          "pose.base": "lying_prone_elbows",
+          "pose.body_direction": "front",
+          "pose.weight": "lying_front",
+          "pose.shoulders": "forward_relaxed",
+          "pose.hand_action": "hands_folded_front",
+          "pose.leg_action": "lying_legs_extended",
+          "pose.head_direction": "head_tilt_up",
+          "pose.gaze": "camera_direct",
+          "pose.expression": "thoughtful"
+        },
+        "tags": [
+          "卧姿",
+          "居家",
+          "横幅"
+        ]
+      },
+      {
+        "id": "recline_leaning_relaxed",
+        "label": "半躺倚靠放松微笑",
+        "fields": {
+          "pose.event": "rest_on_sofa",
+          "pose.base": "recline_leaning",
+          "pose.body_direction": "right_quarter",
+          "pose.weight": "back",
+          "pose.shoulders": "relaxed_level",
+          "pose.hand_action": "hands_on_thighs",
+          "pose.leg_action": "lying_legs_extended",
+          "pose.head_direction": "slight_tilt_right",
+          "pose.gaze": "camera_soft",
+          "pose.expression": "relaxed_smile"
+        },
+        "tags": [
+          "卧姿",
+          "居家",
+          "横幅"
+        ]
+      },
+      {
+        "id": "lying_back_stretch_top",
+        "label": "仰卧伸展向上视线",
+        "fields": {
+          "pose.event": "pause_in_thought",
+          "pose.base": "lying_back_stretch",
+          "pose.body_direction": "front",
+          "pose.weight": "lying_back",
+          "pose.shoulders": "relaxed_level",
+          "pose.hand_action": "hands_folded_front",
+          "pose.leg_action": "lying_legs_extended",
+          "pose.head_direction": "front",
+          "pose.gaze": "look_up",
+          "pose.expression": "calm"
+        },
+        "tags": [
+          "卧姿",
+          "居家",
+          "俯视",
+          "横幅"
+        ]
+      },
+      {
+        "id": "lying_prone_kick_playful",
+        "label": "趴卧翘腿俏皮托腮",
+        "fields": {
+          "pose.event": "rest_on_sofa",
+          "pose.base": "lying_prone_kick",
+          "pose.body_direction": "front",
+          "pose.weight": "lying_front",
+          "pose.shoulders": "relaxed_level",
+          "pose.hand_action": "hand_on_chin",
+          "pose.leg_action": "lying_calves_up",
+          "pose.head_direction": "head_tilt_up",
+          "pose.gaze": "camera_direct",
+          "pose.expression": "playful_wink"
+        },
+        "tags": [
+          "卧姿",
+          "居家",
+          "横幅"
         ]
       }
     ]

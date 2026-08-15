@@ -626,6 +626,14 @@ HEADWEAR_STYLE_COMPATIBILITY = {
     "纯色棒球帽": {"自然披散", "松弛低马尾", "利落高马尾", "低位双辫", "利落短发轮廓"},
 }
 
+# Random headwear draws a group first: hats and veils stay rare, while the
+# no-accessory outcome shares the larger group with small hair accessories.
+HEADWEAR_HAT_GROUP = {
+    "浅草色编织草帽", "宽檐毡帽", "羊毛贝雷帽", "纯色棒球帽",
+    "针织帽", "毛绒软帽", "头纱",
+}
+HEADWEAR_HAT_PROBABILITY = 0.3
+
 CLOTHING_MODE_FIELDS = {
     "连衣裙": (
         "连衣裙类型", "连衣裙颜色", "连衣裙材质", "连衣裙图案"
@@ -761,11 +769,13 @@ ASPECT_RESOLUTIONS = {
     "3:4竖构图": (768, 1024),
     "4:5竖构图": (896, 1120),
     "9:16竖构图": (720, 1280),
+    "9:21竖构图": (576, 1344),
     "1:1方形构图": (1024, 1024),
     "3:2横构图": (1248, 832),
     "4:3横构图": (1024, 768),
     "5:4横构图": (1120, 896),
     "16:9横构图": (1280, 720),
+    "21:9横构图": (1344, 576),
 }
 
 LANDSCAPE_ASPECTS = frozenset(
@@ -1026,11 +1036,13 @@ FIELD_TEXT: Dict[str, Dict[str, str]] = {
         "3:4竖构图": "3:4竖构图",
         "4:5竖构图": "4:5竖构图",
         "9:16竖构图": "9:16竖构图",
+        "9:21竖构图": "9:21竖构图",
         "1:1方形构图": "1:1方形构图",
         "3:2横构图": "3:2横构图",
         "4:3横构图": "4:3横构图",
         "5:4横构图": "5:4横构图",
         "16:9横构图": "16:9横构图",
+        "21:9横构图": "21:9横构图",
     },
     "成像媒介": CAPTURE_MEDIUM_TEXT,
     "写真大类": THEME_CATEGORY_TEXT,
@@ -1571,7 +1583,6 @@ CUSTOM_DEFAULTS = dict(PRESETS[CUSTOM_PRESET])
 
 PROFILE_POOLS: Dict[str, Dict[str, Sequence[str]]] = {
     "日系森系夏日柔光写真": {
-        "画面比例": ["2:3竖构图", "3:4竖构图", "4:5竖构图", "3:2横构图", "4:3横构图"],
         "成像媒介": ["全画幅微单摄影", "35毫米胶片摄影", "便携数码相机摄影"],
         "写真大类": ["自然户外", "旅行度假", "中式美学"],
         "写真主题": ["日系森系夏日写真", "窗边奶油暖调生活写真", "花店日常清新写真"],
@@ -1599,7 +1610,6 @@ PROFILE_POOLS: Dict[str, Dict[str, Sequence[str]]] = {
         "背景环境": ["高亮夏日树林庭院", "奶油色窗边室内"],
     },
     "日系咖啡馆暖调近景人像": {
-        "画面比例": ["3:4竖构图", "2:3竖构图", "4:5竖构图", "4:3横构图", "3:2横构图"],
         "成像媒介": ["便携数码相机摄影", "早期CCD数码摄影", "35毫米胶片摄影"],
         "写真大类": ["日常生活", "复古年代", "都市叙事"],
         "写真主题": ["日系咖啡馆生活写真", "窗边奶油暖调生活写真", "居家晨光松弛写真"],
@@ -1627,7 +1637,6 @@ PROFILE_POOLS: Dict[str, Dict[str, Sequence[str]]] = {
         "背景环境": ["暖木咖啡馆卡座", "奶油色窗边室内"],
     },
     "夜间室内轻奢硬闪时尚写真": {
-        "画面比例": ["2:3竖构图", "3:4竖构图", "4:5竖构图", "3:2横构图", "16:9横构图"],
         "成像媒介": ["专业数码相机摄影", "全画幅微单摄影", "早期CCD数码摄影", "35毫米胶片摄影"],
         "写真大类": ["时尚编辑", "都市叙事", "电影叙事", "复古年代", "幻想概念"],
         "写真主题": ["夜间室内轻奢时尚写真", "高级杂志棚拍写真", "极简黑白时尚写真"],
@@ -1655,7 +1664,6 @@ PROFILE_POOLS: Dict[str, Dict[str, Sequence[str]]] = {
         "背景环境": ["暖色走廊灰色门板", "玻璃幕墙都市夜景", "高级灰摄影棚"],
     },
     "都市职场轻奢坐姿写真": {
-        "画面比例": ["2:3竖构图", "3:4竖构图", "4:5竖构图", "4:3横构图", "5:4横构图"],
         "成像媒介": ["全画幅微单摄影", "中画幅数码摄影", "专业数码相机摄影"],
         "写真大类": ["商业广告", "时尚编辑", "都市叙事"],
         "写真主题": ["都市职场轻奢写真", "专业商务头像写真", "高级酒店品牌写真"],
@@ -1732,7 +1740,7 @@ PROFILE_POSE_BUNDLES = {
 }
 
 THEME_CATEGORY_POSE_BUNDLES = {
-    "日常生活": _pose_bundles("cafe_booth_direct", "cafe_cup_relaxed", "cafe_table_candid", "window_curtain_quiet", "sofa_relaxed_side_gaze"),
+    "日常生活": _pose_bundles("cafe_booth_direct", "cafe_cup_relaxed", "cafe_table_candid", "window_curtain_quiet", "sofa_relaxed_side_gaze", "lying_side_propped_gaze", "recline_leaning_relaxed", "lying_prone_kick_playful"),
     "时尚编辑": _pose_bundles("doorway_fan_flash", "wall_collar_fashion", "walking_turn_street", "fashion_pocket_standing", "side_hair_touch_beauty", "waist_hand_direct"),
     "商业广告": _pose_bundles("workplace_folder_forward", "studio_stool_direct", "elevator_handbag_wait", "glasses_sofa_confident", "waist_hand_direct"),
     "美妆美容": _pose_bundles("side_hair_touch_beauty", "studio_stool_direct", "waist_hand_direct"),
@@ -1742,7 +1750,7 @@ THEME_CATEGORY_POSE_BUNDLES = {
     "运动健康": _pose_bundles("sport_shoelace_crouch", "walking_turn_street", "waist_hand_direct"),
     "中式美学": _pose_bundles("new_chinese_folded_hands", "window_curtain_quiet", "chair_elbow_thoughtful"),
     "复古年代": _pose_bundles("cafe_table_candid", "doorway_fan_flash", "sofa_relaxed_side_gaze", "walking_turn_street"),
-    "电影叙事": _pose_bundles("chair_elbow_thoughtful", "window_curtain_quiet", "umbrella_rain_pause", "sofa_relaxed_side_gaze"),
+    "电影叙事": _pose_bundles("chair_elbow_thoughtful", "window_curtain_quiet", "umbrella_rain_pause", "sofa_relaxed_side_gaze", "lying_prone_elbows_thought", "lying_back_stretch_top"),
     "幻想概念": _pose_bundles("forest_hat_bouquet", "doorway_fan_flash", "wall_collar_fashion", "balcony_railing_distance"),
 }
 
@@ -1917,11 +1925,39 @@ SEATED_POSES = {
     "高脚椅坐姿",
 }
 
+# Reclining poses stretch the body horizontally, so they can fill an
+# ultra-wide canvas even at full-body framing.
+LYING_POSES = {
+    "侧躺撑头",
+    "俯卧撑肘",
+    "半躺倚靠",
+    "仰卧伸展",
+    "趴卧翘腿",
+}
+
+# 21:9 tends to invite a second person unless the subject fills the banner.
+# Gate the ratio behind near framing, lying poses, or centered mid framing.
+WIDE_ASPECT = "21:9横构图"
+WIDE_ASPECT_SHOT_SIZES = {
+    "面部特写", "局部特写", "头肩近景", "胸部以上", "腰部以上",
+}
+WIDE_ASPECT_MID_SHOTS = {"坐姿半身", "三分之二身"}
+WIDE_ASPECT_CENTER_LAYOUTS = {
+    "居中构图", "中央偏右", "中央偏左", "对称构图", "贴近裁切", "对角线构图",
+}
+
 
 def _pose_compatible_camera_bundles(
     base_pose: str, bundles: Iterable[Mapping[str, str]]
 ) -> list[Mapping[str, str]]:
     bundles = list(bundles)
+    if base_pose in LYING_POSES:
+        # Lying poses accept full-body and environmental framing; only the
+        # seated-half framing text contradicts a reclining body.
+        non_seated_framing = [
+            bundle for bundle in bundles if bundle["景别"] != "坐姿半身"
+        ]
+        return non_seated_framing or bundles
     if base_pose in SEATED_POSES:
         seated_or_close = [
             bundle
@@ -1933,6 +1969,40 @@ def _pose_compatible_camera_bundles(
         return seated_or_close or bundles
     standing = [bundle for bundle in bundles if bundle["景别"] != "坐姿半身"]
     return standing or bundles
+
+
+def _wide_aspect_compatible(fields: Mapping[str, str]) -> bool:
+    """Whether the resolved fields let a single subject fill a 21:9 banner."""
+    if fields.get("基础姿态") in LYING_POSES:
+        return True
+    shot_size = fields.get("景别", "")
+    if shot_size in WIDE_ASPECT_SHOT_SIZES:
+        return True
+    return (
+        shot_size in WIDE_ASPECT_MID_SHOTS
+        and fields.get("画面布局") in WIDE_ASPECT_CENTER_LAYOUTS
+    )
+
+
+def _wide_aspect_camera_bundles(
+    bundles: Iterable[Mapping[str, str]],
+    resolved: Mapping[str, str],
+    random_fields: set[str],
+) -> list[Mapping[str, str]]:
+    """When 21:9 is locked manually, keep only camera setups that fill it."""
+    bundles = list(bundles)
+    if "画面比例" in random_fields or resolved.get("画面比例") != WIDE_ASPECT:
+        return bundles
+    filtered = [
+        bundle
+        for bundle in bundles
+        if bundle["景别"] in WIDE_ASPECT_SHOT_SIZES
+        or (
+            bundle["景别"] in WIDE_ASPECT_MID_SHOTS
+            and bundle["画面布局"] in WIDE_ASPECT_CENTER_LAYOUTS
+        )
+    ]
+    return filtered or bundles
 
 THEME_CATEGORY_FIELD_POOLS = {
     "日常生活": {
@@ -2522,6 +2592,15 @@ BRIEF_FIELD_TEXT: Dict[str, Dict[str, str]] = {
         "高级灰黑白配色": "高级灰、黑色与柔白色",
         "木色墨黑米白": "低饱和木色、墨黑与米白色",
     },
+    "瞳色": {
+        "深棕色": "深棕色瞳色",
+        "黑褐色": "黑褐色瞳色",
+        "浅棕色": "浅棕色瞳色",
+        "琥珀色": "琥珀色瞳色",
+        "灰色": "灰色瞳色",
+        "蓝色": "蓝色瞳色",
+        "绿色": "绿色瞳色",
+    },
 }
 
 _PERSON_STANDARD_PREFIXES = {
@@ -3018,6 +3097,9 @@ def resolve_fields(
                     or scene_category_or_profile_bundles
                 )
 
+        if group_fields == CAMERA_OUTPUT_FIELDS:
+            bundles = _wide_aspect_camera_bundles(bundles, resolved, random_fields)
+
         if group_fields == LIGHTING_OUTPUT_FIELDS:
             scene_bundles = _scene_compatible_lighting_plans(selected_scene_bundle)
             if scene_bundles:
@@ -3161,6 +3243,15 @@ def resolve_fields(
                     resolved.get("写真大类", ""), tuple(THEME_TEXT)
                 )
                 resolved[field_name] = rng.choice(list(theme_pool))
+            elif field_name == "画面比例":
+                # 21:9 只有在已解析字段能让人物占满横幅时才进入随机池，
+                # 否则超宽画幅的大片空白很容易被模型填入第二个人物。
+                aspect_pool = list(FIELD_OPTIONS[field_name])
+                if not _wide_aspect_compatible(resolved):
+                    aspect_pool = [
+                        value for value in aspect_pool if value != WIDE_ASPECT
+                    ]
+                resolved[field_name] = rng.choice(aspect_pool)
             elif field_name == "头部配饰":
                 base_pool = (
                     FIELD_OPTIONS[field_name]
@@ -3174,7 +3265,41 @@ def resolve_fields(
                     base_pool,
                     resolved.get("手部动作", ""),
                 )
-                resolved[field_name] = rng.choice(compatible_pool)
+                required_headwear = POSE_HAND_HEADWEAR_REQUIREMENTS.get(
+                    resolved.get("手部动作", "")
+                )
+                if required_headwear:
+                    # 扶帽檐类动作强制帽子类配饰，跳过分组随机；发型兼容
+                    # 过滤可能清空帽子候选，此时直接回落到动作要求的帽子集合。
+                    required_pool = [
+                        item for item in compatible_pool
+                        if item in required_headwear
+                    ]
+                    resolved[field_name] = rng.choice(
+                        required_pool or sorted(required_headwear)
+                    )
+                else:
+                    # 两段式抽取：先抽大分组（30% 帽子类+头纱 /
+                    # 70% 不使用+其他发饰），组内成员等概率。
+                    hat_group = [
+                        item for item in compatible_pool
+                        if item in HEADWEAR_HAT_GROUP
+                    ]
+                    other_group = [
+                        item for item in compatible_pool
+                        if item not in HEADWEAR_HAT_GROUP
+                    ]
+                    if rng.random() < HEADWEAR_HAT_PROBABILITY:
+                        if hat_group:
+                            resolved[field_name] = rng.choice(hat_group)
+                        elif other_group:
+                            resolved[field_name] = rng.choice(other_group)
+                        else:
+                            resolved[field_name] = EMPTY_CHOICE
+                    else:
+                        resolved[field_name] = rng.choice(
+                            [EMPTY_CHOICE, *other_group]
+                        )
             elif (
                 random_scope == RANDOM_SCOPES[2]
                 and field_name
@@ -3264,6 +3389,21 @@ def resolve_fields(
     elif resolved["画面比例"] in PORTRAIT_ASPECTS:
         orientation_bundles = PORTRAIT_CAMERA_BUNDLES
     if orientation_bundles and active_oriented_camera:
+        if resolved["画面比例"] == WIDE_ASPECT:
+            # 21:9 needs the subject to fill the banner, so draw from the
+            # global pool of near or centered setups instead of the
+            # environmental landscape pool that would leave lateral voids.
+            wide_pool = [
+                bundle
+                for bundle in CAMERA_BUNDLES
+                if bundle["景别"] in WIDE_ASPECT_SHOT_SIZES
+                or (
+                    bundle["景别"] in WIDE_ASPECT_MID_SHOTS
+                    and bundle["画面布局"] in WIDE_ASPECT_CENTER_LAYOUTS
+                )
+            ]
+            if wide_pool:
+                orientation_bundles = wide_pool
         if random_scope == RANDOM_SCOPES[2]:
             category_camera = THEME_CATEGORY_CAMERA_BUNDLES.get(
                 resolved.get("写真大类", ""), CAMERA_BUNDLES

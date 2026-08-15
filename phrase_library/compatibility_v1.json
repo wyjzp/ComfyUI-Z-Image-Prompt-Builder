@@ -419,7 +419,7 @@
     {
       "id":"landscape_portrait_composition",
       "label":"横构图环境与侧向留白偏好",
-      "when":{"field":"camera.aspect_ratio","values":["landscape_3_2","landscape_4_3","landscape_5_4","landscape_16_9"]},
+      "when":{"field":"camera.aspect_ratio","values":["landscape_3_2","landscape_4_3","landscape_5_4","landscape_16_9","landscape_21_9"]},
       "prefer_bundles":{"camera_setups":["travel_environment_35","interior_environment_28","landscape_gaze_space_50","street_full_50","phone_waist","symmetry_gallery_40"]},
       "allow_values":{"camera.composition":["left_third","right_third","center_left","center_right","negative_space","gaze_space","symmetrical"]},
       "weight":5
