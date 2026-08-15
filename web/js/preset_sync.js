@@ -852,11 +852,15 @@ app.registerExtension({
       node.__vividMuseClearStructuredButton = true;
     }
 
-    if (!node.__vividMuseClearEverythingButton) {
-      addNonSerializedWidget(
-        node, "button", "全部清空", null, () => clearEverything(node),
+    // "全部清空"按钮已按用户要求移除（调整节点尺寸时容易误触）。
+    // 底部保留一块空白区域，把调整尺寸的手柄和上面的按钮隔开。
+    if (!node.__vividMuseBottomSpacer) {
+      const bottomSpacer = addNonSerializedWidget(
+        node, "button", "__vividMuseBottomSpacer", null, () => {},
       );
-      node.__vividMuseClearEverythingButton = true;
+      bottomSpacer.computeSize = () => [0, 48];
+      bottomSpacer.draw = () => {};
+      node.__vividMuseBottomSpacer = bottomSpacer;
     }
 
     ensureConfiguredNode(node);
