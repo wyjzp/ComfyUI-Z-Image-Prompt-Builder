@@ -1936,14 +1936,17 @@ LYING_POSES = {
 }
 
 # 21:9 tends to invite a second person unless the subject fills the banner.
-# Gate the ratio behind near framing, lying poses, or centered mid framing.
+# 方案A：卧姿（身体横展）可以放开全身类景别；非卧姿只留贴脸的近景，
+# 胸部以上/腰部以上必须配能撑满画面的居中系布局。
 WIDE_ASPECT = "21:9横构图"
-WIDE_ASPECT_SHOT_SIZES = {
-    "面部特写", "局部特写", "头肩近景", "胸部以上", "腰部以上",
-}
-WIDE_ASPECT_MID_SHOTS = {"坐姿半身", "三分之二身"}
-WIDE_ASPECT_CENTER_LAYOUTS = {
-    "居中构图", "中央偏右", "中央偏左", "对称构图", "贴近裁切", "对角线构图",
+# 近景：头脸细节足以撑满超宽画幅，任何布局都安全。
+WIDE_ASPECT_TIGHT_SHOTS = {"面部特写", "局部特写", "头肩近景"}
+# 中近景：只有居中系布局才能把人物撑满横幅，三分线/偏移布局会留出空位。
+WIDE_ASPECT_MID_SHOTS = {"胸部以上", "腰部以上"}
+WIDE_ASPECT_FILL_LAYOUTS = {"居中构图", "对称构图", "贴近裁切"}
+# 卧姿额外放开的景别：横躺的身体沿画幅长边展开，全身反而最不容易出第二人。
+WIDE_ASPECT_LYING_EXTRA_SHOTS = {
+    "全身构图", "带环境全身", "动态全身", "三分之二身",
 }
 
 
@@ -1971,17 +1974,30 @@ def _pose_compatible_camera_bundles(
     return standing or bundles
 
 
-def _wide_aspect_compatible(fields: Mapping[str, str]) -> bool:
-    """Whether the resolved fields let a single subject fill a 21:9 banner."""
-    if fields.get("基础姿态") in LYING_POSES:
-        return True
-    shot_size = fields.get("景别", "")
-    if shot_size in WIDE_ASPECT_SHOT_SIZES:
+def _wide_aspect_bundle_ok(bundle: Mapping[str, str], base_pose: str) -> bool:
+    """Whether a camera setup lets a single subject fill a 21:9 banner."""
+    shot_size = bundle["景别"]
+    if base_pose in LYING_POSES:
+        return shot_size in (
+            WIDE_ASPECT_TIGHT_SHOTS
+            | WIDE_ASPECT_MID_SHOTS
+            | WIDE_ASPECT_LYING_EXTRA_SHOTS
+        )
+    if shot_size in WIDE_ASPECT_TIGHT_SHOTS:
         return True
     return (
         shot_size in WIDE_ASPECT_MID_SHOTS
-        and fields.get("画面布局") in WIDE_ASPECT_CENTER_LAYOUTS
+        and bundle["画面布局"] in WIDE_ASPECT_FILL_LAYOUTS
     )
+
+
+def _wide_aspect_compatible(fields: Mapping[str, str]) -> bool:
+    """Whether the resolved fields let a single subject fill a 21:9 banner."""
+    probe = {
+        "景别": fields.get("景别", ""),
+        "画面布局": fields.get("画面布局", ""),
+    }
+    return _wide_aspect_bundle_ok(probe, fields.get("基础姿态", ""))
 
 
 def _wide_aspect_camera_bundles(
@@ -1993,14 +2009,9 @@ def _wide_aspect_camera_bundles(
     bundles = list(bundles)
     if "画面比例" in random_fields or resolved.get("画面比例") != WIDE_ASPECT:
         return bundles
+    base_pose = resolved.get("基础姿态", "")
     filtered = [
-        bundle
-        for bundle in bundles
-        if bundle["景别"] in WIDE_ASPECT_SHOT_SIZES
-        or (
-            bundle["景别"] in WIDE_ASPECT_MID_SHOTS
-            and bundle["画面布局"] in WIDE_ASPECT_CENTER_LAYOUTS
-        )
+        bundle for bundle in bundles if _wide_aspect_bundle_ok(bundle, base_pose)
     ]
     return filtered or bundles
 
@@ -3396,10 +3407,8 @@ def resolve_fields(
             wide_pool = [
                 bundle
                 for bundle in CAMERA_BUNDLES
-                if bundle["景别"] in WIDE_ASPECT_SHOT_SIZES
-                or (
-                    bundle["景别"] in WIDE_ASPECT_MID_SHOTS
-                    and bundle["画面布局"] in WIDE_ASPECT_CENTER_LAYOUTS
+                if _wide_aspect_bundle_ok(
+                    bundle, resolved.get("基础姿态", "")
                 )
             ]
             if wide_pool:
