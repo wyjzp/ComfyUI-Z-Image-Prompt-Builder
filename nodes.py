@@ -13,6 +13,9 @@ FOLLOW_PRESET = "跟随预设"
 RANDOM_CHOICE = "随机抽取"
 EMPTY_CHOICE = "不使用"
 CUSTOM_PRESET = "自定义组合"
+# 画面比例的两种“按方向随机”：只在竖屏 / 只在横屏的比例里随机抽取。
+PORTRAIT_RANDOM = "随机竖屏"
+LANDSCAPE_RANDOM = "随机横屏"
 MAX_SEED = 0xFFFFFFFFFFFFFFFF
 
 PRESET_OPTIONS = [
@@ -2015,6 +2018,41 @@ def _wide_aspect_camera_bundles(
     ]
     return filtered or bundles
 
+
+# 21:9 的超宽画幅会把背景里“路人/人群”一类的文本直接渲染成第二个可辨识
+# 人物。随机抽取场景时剔除这些选项；明确锁定仍保留用户自己的选择，由
+# 提示词里的单人约束兜底。
+WIDE_ASPECT_PEOPLE_PATTERNS = ("行人", "人群", "路人", "人头", "顾客")
+
+
+def _wide_aspect_scene_label_unsafe(field_name: str, label: str) -> bool:
+    """Whether a resolved scene label would render other people into the frame."""
+    if label in (EMPTY_CHOICE, FOLLOW_PRESET):
+        return False
+    text = FIELD_TEXT.get(field_name, {}).get(label, label)
+    return any(pattern in text for pattern in WIDE_ASPECT_PEOPLE_PATTERNS)
+
+
+_WIDE_ASPECT_SCENE_FIELDS = (
+    "场景地点", "背景环境", "环境细节", "时间切片", "场景大类",
+)
+
+
+def _wide_aspect_scene_bundle_ok(bundle: Mapping[str, str]) -> bool:
+    """Whether a scene bundle keeps the 21:9 banner free of other people."""
+    return not any(
+        _wide_aspect_scene_label_unsafe(field_name, bundle.get(field_name, ""))
+        for field_name in _WIDE_ASPECT_SCENE_FIELDS
+    )
+
+
+def _wide_aspect_scene_ok(fields: Mapping[str, str]) -> bool:
+    """Whether the resolved scene fields keep the 21:9 banner single-person."""
+    return not any(
+        _wide_aspect_scene_label_unsafe(field_name, fields.get(field_name, ""))
+        for field_name in _WIDE_ASPECT_SCENE_FIELDS
+    )
+
 THEME_CATEGORY_FIELD_POOLS = {
     "日常生活": {
         "成像媒介": ["全画幅微单摄影", "半画幅微单摄影", "手机计算摄影", "便携数码相机摄影", "35毫米胶片摄影"],
@@ -2987,6 +3025,12 @@ def resolve_fields(
             resolved[field_name] = EMPTY_CHOICE
         elif value == RANDOM_CHOICE:
             random_fields.add(field_name)
+        elif (
+            field_name == "画面比例"
+            and value in (PORTRAIT_RANDOM, LANDSCAPE_RANDOM)
+        ):
+            # 随机竖屏 / 随机横屏按随机处理，池子方向由下方“画面比例”分支限定。
+            random_fields.add(field_name)
         elif _known_request(field_name, value):
             resolved[field_name] = value
 
@@ -3231,6 +3275,25 @@ def resolve_fields(
                     global_bundles, group_fields, resolved, random_fields
                 )
             candidates = candidates or list(bundles)
+        if (
+            group_fields == SCENE_GROUP_FIELDS
+            and resolved.get("画面比例") == WIDE_ASPECT
+        ):
+            # 21:9 锁定时，场景候选剔除文本里会出现路人/人群的选项，
+            # 否则超宽画幅容易把它们渲染成第二个可辨识人物。
+            safe_candidates = [
+                bundle for bundle in candidates
+                if _wide_aspect_scene_bundle_ok(bundle)
+            ]
+            if not safe_candidates and not explicit_scene_locks:
+                # 主题限定场景全部带路人/人群时，回落到通用的安全场景，
+                # 而不是保留会把第二个人渲染进画面的街道场景。
+                safe_candidates = [
+                    bundle
+                    for bundle in (*global_bundles, *ALL_LOCATION_THEME_SCENE_BUNDLES)
+                    if _wide_aspect_scene_bundle_ok(bundle)
+                ]
+            candidates = safe_candidates or list(candidates)
         selected_bundle = rng.choice(candidates)
         if group_fields == SCENE_GROUP_FIELDS:
             for field_name in SCENE_GROUP_FIELDS:
@@ -3255,10 +3318,24 @@ def resolve_fields(
                 )
                 resolved[field_name] = rng.choice(list(theme_pool))
             elif field_name == "画面比例":
-                # 21:9 只有在已解析字段能让人物占满横幅时才进入随机池，
-                # 否则超宽画幅的大片空白很容易被模型填入第二个人物。
+                # 随机竖屏/随机横屏只从对应方向的比例里抽取，方形 1:1 不参与。
                 aspect_pool = list(FIELD_OPTIONS[field_name])
-                if not _wide_aspect_compatible(resolved):
+                requested_aspect = requested.get(field_name, FOLLOW_PRESET)
+                if requested_aspect == PORTRAIT_RANDOM:
+                    aspect_pool = [
+                        value for value in aspect_pool if value in PORTRAIT_ASPECTS
+                    ]
+                elif requested_aspect == LANDSCAPE_RANDOM:
+                    aspect_pool = [
+                        value for value in aspect_pool if value in LANDSCAPE_ASPECTS
+                    ]
+                # 21:9 只有在已解析字段能让人物占满横幅、且场景文本不会
+                # 渲染出路人/人群时才进入随机池，否则超宽画幅的大片空白
+                # 很容易被模型填入第二个人物。
+                if not (
+                    _wide_aspect_compatible(resolved)
+                    and _wide_aspect_scene_ok(resolved)
+                ):
                     aspect_pool = [
                         value for value in aspect_pool if value != WIDE_ASPECT
                     ]
@@ -3461,15 +3538,22 @@ def _person_identity_text(fields: Mapping[str, str]) -> str:
 
     if age and ethnicity:
         if "外观" in ethnicity:
-            return f"一位{age}、具有{ethnicity}的成年女性"
-        return f"一位{age}的{ethnicity}成年女性"
-    if age:
-        return f"一位{age}的成年女性"
-    if ethnicity:
+            identity = f"一位{age}、具有{ethnicity}的成年女性"
+        else:
+            identity = f"一位{age}的{ethnicity}成年女性"
+    elif age:
+        identity = f"一位{age}的成年女性"
+    elif ethnicity:
         if "外观" in ethnicity:
-            return f"一位具有{ethnicity}的成年女性"
-        return f"一位{ethnicity}成年女性"
-    return ""
+            identity = f"一位具有{ethnicity}的成年女性"
+        else:
+            identity = f"一位{ethnicity}成年女性"
+    else:
+        return ""
+    # 21:9 超宽画幅容易让模型在人物旁边补出第二个人，明确点出“仅此一人”。
+    if fields.get("画面比例") == WIDE_ASPECT:
+        return f"{identity}，画面中仅此一人，无其他人入镜"
+    return identity
 
 
 def _person_field_prompt_text(
@@ -4270,9 +4354,24 @@ class ZImageChinesePromptBuilder:
             ),
         }
         for field_name in FIELD_ORDER:
-            inputs[field_name] = (
-                [FOLLOW_PRESET, RANDOM_CHOICE, EMPTY_CHOICE, *FIELD_OPTIONS[field_name]],
-            )
+            if field_name == "画面比例":
+                # 随机竖屏/随机横屏放在随机抽取之前，方便按方向批量出图。
+                choices = [
+                    FOLLOW_PRESET,
+                    PORTRAIT_RANDOM,
+                    LANDSCAPE_RANDOM,
+                    RANDOM_CHOICE,
+                    EMPTY_CHOICE,
+                    *FIELD_OPTIONS[field_name],
+                ]
+            else:
+                choices = [
+                    FOLLOW_PRESET,
+                    RANDOM_CHOICE,
+                    EMPTY_CHOICE,
+                    *FIELD_OPTIONS[field_name],
+                ]
+            inputs[field_name] = (choices,)
         optional = {
             "自由提示词": (
                 "STRING",
