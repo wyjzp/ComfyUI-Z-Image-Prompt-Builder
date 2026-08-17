@@ -2019,6 +2019,60 @@ def _wide_aspect_camera_bundles(
     return filtered or bundles
 
 
+# 21:9 的最终相机约束不能只作用于随机字段。跟随预设、旧工作流迁移
+# 和部分手动参数都可能留下“站姿＋动态全身”这种竖直主体的空旷横幅，
+# 从而让模型在两侧重复画出同一人物。
+WIDE_ASPECT_UPRIGHT_CAMERA_BUNDLES = tuple(
+    bundle
+    for bundle in CAMERA_BUNDLES
+    # “局部特写”虽然理论上安全，但手部/服装的局部并不等于人物本体撑满
+    # 横幅。非卧姿的 21:9 只保留脸部、头肩和居中胸部近景。
+    if bundle["景别"] in {"面部特写", "头肩近景", "胸部以上"}
+    and bundle["画面布局"] in WIDE_ASPECT_FILL_LAYOUTS
+)
+
+
+def _wide_aspect_upright_fill_frame_ok(fields: Mapping[str, str]) -> bool:
+    """Whether an upright 21:9 camera plan makes the person fill the banner."""
+    return any(
+        all(fields.get(field_name) == bundle[field_name] for field_name in CAMERA_OUTPUT_FIELDS)
+        for bundle in WIDE_ASPECT_UPRIGHT_CAMERA_BUNDLES
+    )
+
+
+def _normalize_wide_aspect_camera(
+    rng: random.Random,
+    resolved: Dict[str, str],
+) -> None:
+    """Force a resolved 21:9 result into a subject-filling camera setup."""
+    if resolved.get("画面比例") != WIDE_ASPECT:
+        return
+
+    base_pose = resolved.get("基础姿态", "")
+    if base_pose in LYING_POSES:
+        if _wide_aspect_compatible(resolved):
+            return
+    elif _wide_aspect_upright_fill_frame_ok(resolved):
+        return
+
+    if base_pose in LYING_POSES:
+        candidates = [
+            bundle for bundle in CAMERA_BUNDLES
+            if _wide_aspect_bundle_ok(bundle, base_pose)
+        ]
+    else:
+        # 竖直主体必须使用近景/居中中近景；绝不回退到全身、环境或动态
+        # 全身构图，否则 21:9 两侧会留下足够空间让模型重复同一个人物。
+        candidates = list(WIDE_ASPECT_UPRIGHT_CAMERA_BUNDLES)
+
+    if not candidates:
+        raise ValueError("No subject-filling camera bundle is available for 21:9")
+
+    selected_bundle = rng.choice(candidates)
+    for field_name in CAMERA_OUTPUT_FIELDS:
+        resolved[field_name] = selected_bundle[field_name]
+
+
 # 21:9 的超宽画幅会把背景里“路人/人群”一类的文本直接渲染成第二个可辨识
 # 人物。随机抽取场景时剔除这些选项；明确锁定仍保留用户自己的选择，由
 # 提示词里的单人约束兜底。
@@ -3512,6 +3566,10 @@ def resolve_fields(
         for field_name in active_oriented_camera:
             resolved[field_name] = selected_bundle[field_name]
 
+    # 最终兜底：前面的相机分组与方向校正只会重选随机字段；这里对完整
+    # 的已解析结果进行硬校正，避免跟随预设、旧工作流或手动全身构图绕过
+    # 21:9 的主体撑满画幅规则。
+    _normalize_wide_aspect_camera(rng, resolved)
     return resolved
 
 
@@ -3550,9 +3608,6 @@ def _person_identity_text(fields: Mapping[str, str]) -> str:
             identity = f"一位{ethnicity}成年女性"
     else:
         return ""
-    # 21:9 超宽画幅容易让模型在人物旁边补出第二个人，明确点出“仅此一人”。
-    if fields.get("画面比例") == WIDE_ASPECT:
-        return f"{identity}，画面中仅此一人，无其他人入镜"
     return identity
 
 
@@ -3912,6 +3967,18 @@ _CAMERA_SHOT_STANDARD = {
 }
 
 
+def _wide_aspect_fill_frame_text(density: str) -> str:
+    """Tell the model how an upright subject should occupy a 21:9 banner."""
+    if density == "精简":
+        return "主体横向占据画面主要宽度，贴近边缘裁切"
+    if density == "详细":
+        return (
+            "主体以近距离横向展开的紧凑构图占据画面绝大部分宽度，"
+            "人物轮廓贴近左右画面边缘，两侧只保留少量背景"
+        )
+    return "主体横向占据画面主要宽度，左右仅保留少量背景，贴近边缘裁切"
+
+
 def _camera_prompt_text(fields: Mapping[str, str], density: str) -> str:
     """Compose atomic camera controls as one coherent photography clause."""
 
@@ -3925,6 +3992,8 @@ def _camera_prompt_text(fields: Mapping[str, str], density: str) -> str:
 
     if density == "详细":
         parts = []
+        if fields.get("画面比例") == WIDE_ASPECT:
+            parts.append(_wide_aspect_fill_frame_text(density))
         for field_name in CAMERA_OUTPUT_FIELDS:
             value = active.get(field_name)
             if not value:
@@ -3936,6 +4005,8 @@ def _camera_prompt_text(fields: Mapping[str, str], density: str) -> str:
         return "，".join(part.rstrip("，；。 ") for part in parts)
 
     parts = []
+    if fields.get("画面比例") == WIDE_ASPECT:
+        parts.append(_wide_aspect_fill_frame_text(density))
     if "景别" in active:
         parts.append(_CAMERA_SHOT_STANDARD.get(active["景别"], active["景别"]))
     if "画面布局" in active:
