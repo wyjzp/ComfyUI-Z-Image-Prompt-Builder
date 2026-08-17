@@ -593,6 +593,81 @@
           "id": "green",
           "label": "绿色",
           "value": "瞳色为低饱和自然绿色"
+        },
+        {
+          "id": "hazel_brown",
+          "label": "榛褐色",
+          "value": "瞳色为带绿色与金棕层次的榛褐色"
+        },
+        {
+          "id": "golden_brown",
+          "label": "金棕色",
+          "value": "瞳色为明亮通透的金棕色"
+        },
+        {
+          "id": "honey_gold",
+          "label": "蜂蜜金色",
+          "value": "瞳色为温暖透亮的蜂蜜金色"
+        },
+        {
+          "id": "olive_green",
+          "label": "橄榄绿色",
+          "value": "瞳色为低饱和的橄榄绿色"
+        },
+        {
+          "id": "ocean_blue",
+          "label": "海蓝色",
+          "value": "瞳色为深邃通透的海蓝色"
+        },
+        {
+          "id": "ice_blue",
+          "label": "冰蓝色",
+          "value": "瞳色为清冷明亮的冰蓝色"
+        },
+        {
+          "id": "blue_gray",
+          "label": "青灰色",
+          "value": "瞳色为带蓝调的青灰色"
+        },
+        {
+          "id": "silver_gray",
+          "label": "银灰色",
+          "value": "瞳色为通透冷调的银灰色"
+        },
+        {
+          "id": "violet_gray",
+          "label": "紫灰色",
+          "value": "瞳色为带淡紫层次的灰紫色"
+        },
+        {
+          "id": "deep_violet",
+          "label": "深紫色",
+          "value": "瞳色为深邃低饱和的深紫色"
+        },
+        {
+          "id": "rose_pink",
+          "label": "玫瑰粉色",
+          "value": "瞳色为柔和通透的玫瑰粉色"
+        },
+        {
+          "id": "heterochromia",
+          "label": "异色瞳（左右不同色）",
+          "value": "双眼呈自然异色瞳，左右眼颜色不同且层次清晰"
+        },
+        {
+          "id": "heterochromia_blue_brown",
+          "label": "异色瞳（左蓝右棕）",
+          "value": "双眼呈异色瞳，左眼为清晰蓝色，右眼为通透浅棕色"
+        },
+        {
+          "id": "heterochromia_green_amber",
+          "label": "异色瞳（左绿右琥珀）",
+          "value": "双眼呈异色瞳，左眼为自然绿色，右眼为金棕琥珀色"
+        },
+        {
+          "id": "heterochromia_gray_blue",
+          "label": "异色瞳（左灰右蓝）",
+          "value": "双眼呈异色瞳，左眼为银灰色，右眼为清晰海蓝色"
         }
       ]
     },
