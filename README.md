@@ -18,3 +18,4 @@
 ## 上游仓库
 
 - https://github.com/VividMuse-AGI/ComfyUI-Z-Image-Prompt-Builder
+- 如果这个插件对你有帮助，请前往原作者仓库点一个 Star，支持原作者继续维护。
