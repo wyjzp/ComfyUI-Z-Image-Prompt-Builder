@@ -1,6 +1,6 @@
 # ComfyUI Z-Image Prompt Builder（个人改造版）
 
-[English](README.en.md) | 简体中文 | [繁體中文](README.zh-TW.md)
+简体中文 | [繁體中文](README.zh-TW.md) | [English](README.en.md)
 
 这是 [VividMuse-AGI/ComfyUI-Z-Image-Prompt-Builder](https://github.com/VividMuse-AGI/ComfyUI-Z-Image-Prompt-Builder) 的个人改造版。
 
