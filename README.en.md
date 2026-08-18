@@ -8,14 +8,7 @@ The upstream project and this repository use the [MIT License](LICENSE). Refer t
 
 ## Features added in this repository
 
-- Added recommended dimensions for **9:21 portrait** and **21:9 landscape** canvases.
 - Added **Random Portrait** and **Random Landscape** aspect-ratio options. They select only ratios in the matching orientation; square ratios are excluded.
-- Strengthened 21:9 ultra-wide composition:
-  - Upright subjects use close, subject-filling camera setups.
-  - Standing, walking, seated, and crouching poses cannot retain dynamic full-body, full-body, or environmental framings that leave large lateral empty areas.
-  - Only genuinely horizontal reclining poses may retain full-body ultra-wide framing.
-  - Prompts request a subject occupying most of the banner width with narrow background margins, reducing repeated copies of the same subject in ultra-wide output.
-- Random 21:9 scene selection avoids options whose text explicitly describes pedestrians or crowds.
 
 ## Upstream project
 

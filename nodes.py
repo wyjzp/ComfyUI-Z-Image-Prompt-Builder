@@ -772,13 +772,11 @@ ASPECT_RESOLUTIONS = {
     "3:4竖构图": (768, 1024),
     "4:5竖构图": (896, 1120),
     "9:16竖构图": (720, 1280),
-    "9:21竖构图": (576, 1344),
     "1:1方形构图": (1024, 1024),
     "3:2横构图": (1248, 832),
     "4:3横构图": (1024, 768),
     "5:4横构图": (1120, 896),
     "16:9横构图": (1280, 720),
-    "21:9横构图": (1344, 576),
 }
 
 LANDSCAPE_ASPECTS = frozenset(
@@ -1039,13 +1037,11 @@ FIELD_TEXT: Dict[str, Dict[str, str]] = {
         "3:4竖构图": "3:4竖构图",
         "4:5竖构图": "4:5竖构图",
         "9:16竖构图": "9:16竖构图",
-        "9:21竖构图": "9:21竖构图",
         "1:1方形构图": "1:1方形构图",
         "3:2横构图": "3:2横构图",
         "4:3横构图": "4:3横构图",
         "5:4横构图": "5:4横构图",
         "16:9横构图": "16:9横构图",
-        "21:9横构图": "21:9横构图",
     },
     "成像媒介": CAPTURE_MEDIUM_TEXT,
     "写真大类": THEME_CATEGORY_TEXT,
@@ -1595,7 +1591,7 @@ PROFILE_POOLS: Dict[str, Dict[str, Sequence[str]]] = {
         "脸型": ["标准鹅蛋脸", "圆润脸型"],
         "轮廓细节": ["下颌线柔和", "颧骨柔和", "面颊饱满"],
         "眼型": ["杏仁眼", "明亮圆眼", "柔和垂眼"],
-        "瞳色": ["深棕色", "黑褐色", "浅棕色", "榛褐色", "蜂蜜金色", "橄榄绿色", "海蓝色", "冰蓝色", "青灰色", "异色瞳（左右不同色）"],
+        "瞳色": ["深棕色", "黑褐色", "浅棕色"],
         "眼睑特征": ["自然双眼皮", "内双"],
         "肤色": ["暖白肤色", "自然浅肤色"],
         "肤质": ["自然细腻", "真实皮肤纹理", "柔润水光"],
@@ -1622,7 +1618,7 @@ PROFILE_POOLS: Dict[str, Dict[str, Sequence[str]]] = {
         "脸型": ["圆润脸型", "标准鹅蛋脸"],
         "轮廓细节": ["面颊饱满", "颧骨柔和", "下颌线柔和"],
         "眼型": ["杏仁眼", "明亮圆眼", "柔和垂眼"],
-        "瞳色": ["深棕色", "黑褐色", "浅棕色", "榛褐色", "蜂蜜金色", "橄榄绿色", "海蓝色", "冰蓝色", "青灰色", "异色瞳（左右不同色）"],
+        "瞳色": ["深棕色", "黑褐色", "浅棕色"],
         "眼睑特征": ["自然双眼皮", "内双"],
         "肤色": ["暖白肤色", "自然浅肤色"],
         "肤质": ["自然细腻", "真实皮肤纹理", "柔润水光"],
@@ -1649,7 +1645,7 @@ PROFILE_POOLS: Dict[str, Dict[str, Sequence[str]]] = {
         "脸型": ["修长脸型", "标准鹅蛋脸", "菱形脸"],
         "轮廓细节": ["下颌线清晰", "颧骨清晰", "面颊清瘦"],
         "眼型": ["杏仁眼", "微挑眼", "细长眼"],
-        "瞳色": ["深棕色", "黑褐色", "琥珀色", "金棕色", "银灰色", "紫灰色", "深紫色", "玫瑰粉色", "异色瞳（左蓝右棕）", "异色瞳（左绿右琥珀）", "异色瞳（左灰右蓝）"],
+        "瞳色": ["深棕色", "黑褐色", "琥珀色"],
         "眼睑特征": ["自然双眼皮", "内双"],
         "肤色": ["冷白肤色", "暖白肤色", "自然浅肤色"],
         "肤质": ["柔雾均匀", "真实皮肤纹理", "自然细腻"],
@@ -1676,7 +1672,7 @@ PROFILE_POOLS: Dict[str, Dict[str, Sequence[str]]] = {
         "脸型": ["修长脸型", "标准鹅蛋脸", "柔和方圆脸"],
         "轮廓细节": ["下颌线清晰", "颧骨柔和", "面颊清瘦"],
         "眼型": ["杏仁眼", "细长眼", "微挑眼"],
-        "瞳色": ["深棕色", "黑褐色", "浅棕色", "榛褐色", "蜂蜜金色", "橄榄绿色", "海蓝色", "冰蓝色", "青灰色", "异色瞳（左右不同色）"],
+        "瞳色": ["深棕色", "黑褐色", "浅棕色"],
         "眼睑特征": ["自然双眼皮", "内双"],
         "肤色": ["暖白肤色", "自然浅肤色", "冷白肤色"],
         "肤质": ["自然细腻", "真实皮肤纹理", "柔雾均匀"],
@@ -1938,21 +1934,6 @@ LYING_POSES = {
     "趴卧翘腿",
 }
 
-# 21:9 tends to invite a second person unless the subject fills the banner.
-# 方案A：卧姿（身体横展）可以放开全身类景别；非卧姿只留贴脸的近景，
-# 胸部以上/腰部以上必须配能撑满画面的居中系布局。
-WIDE_ASPECT = "21:9横构图"
-# 近景：头脸细节足以撑满超宽画幅，任何布局都安全。
-WIDE_ASPECT_TIGHT_SHOTS = {"面部特写", "局部特写", "头肩近景"}
-# 中近景：只有居中系布局才能把人物撑满横幅，三分线/偏移布局会留出空位。
-WIDE_ASPECT_MID_SHOTS = {"胸部以上", "腰部以上"}
-WIDE_ASPECT_FILL_LAYOUTS = {"居中构图", "对称构图", "贴近裁切"}
-# 卧姿额外放开的景别：横躺的身体沿画幅长边展开，全身反而最不容易出第二人。
-WIDE_ASPECT_LYING_EXTRA_SHOTS = {
-    "全身构图", "带环境全身", "动态全身", "三分之二身",
-}
-
-
 def _pose_compatible_camera_bundles(
     base_pose: str, bundles: Iterable[Mapping[str, str]]
 ) -> list[Mapping[str, str]]:
@@ -1976,136 +1957,6 @@ def _pose_compatible_camera_bundles(
     standing = [bundle for bundle in bundles if bundle["景别"] != "坐姿半身"]
     return standing or bundles
 
-
-def _wide_aspect_bundle_ok(bundle: Mapping[str, str], base_pose: str) -> bool:
-    """Whether a camera setup lets a single subject fill a 21:9 banner."""
-    shot_size = bundle["景别"]
-    if base_pose in LYING_POSES:
-        return shot_size in (
-            WIDE_ASPECT_TIGHT_SHOTS
-            | WIDE_ASPECT_MID_SHOTS
-            | WIDE_ASPECT_LYING_EXTRA_SHOTS
-        )
-    if shot_size in WIDE_ASPECT_TIGHT_SHOTS:
-        return True
-    return (
-        shot_size in WIDE_ASPECT_MID_SHOTS
-        and bundle["画面布局"] in WIDE_ASPECT_FILL_LAYOUTS
-    )
-
-
-def _wide_aspect_compatible(fields: Mapping[str, str]) -> bool:
-    """Whether the resolved fields let a single subject fill a 21:9 banner."""
-    probe = {
-        "景别": fields.get("景别", ""),
-        "画面布局": fields.get("画面布局", ""),
-    }
-    return _wide_aspect_bundle_ok(probe, fields.get("基础姿态", ""))
-
-
-def _wide_aspect_camera_bundles(
-    bundles: Iterable[Mapping[str, str]],
-    resolved: Mapping[str, str],
-    random_fields: set[str],
-) -> list[Mapping[str, str]]:
-    """When 21:9 is locked manually, keep only camera setups that fill it."""
-    bundles = list(bundles)
-    if "画面比例" in random_fields or resolved.get("画面比例") != WIDE_ASPECT:
-        return bundles
-    base_pose = resolved.get("基础姿态", "")
-    filtered = [
-        bundle for bundle in bundles if _wide_aspect_bundle_ok(bundle, base_pose)
-    ]
-    return filtered or bundles
-
-
-# 21:9 的最终相机约束不能只作用于随机字段。跟随预设、旧工作流迁移
-# 和部分手动参数都可能留下“站姿＋动态全身”这种竖直主体的空旷横幅，
-# 从而让模型在两侧重复画出同一人物。
-WIDE_ASPECT_UPRIGHT_CAMERA_BUNDLES = tuple(
-    bundle
-    for bundle in CAMERA_BUNDLES
-    # “局部特写”虽然理论上安全，但手部/服装的局部并不等于人物本体撑满
-    # 横幅。非卧姿的 21:9 只保留脸部、头肩和居中胸部近景。
-    if bundle["景别"] in {"面部特写", "头肩近景", "胸部以上"}
-    and bundle["画面布局"] in WIDE_ASPECT_FILL_LAYOUTS
-)
-
-
-def _wide_aspect_upright_fill_frame_ok(fields: Mapping[str, str]) -> bool:
-    """Whether an upright 21:9 camera plan makes the person fill the banner."""
-    return any(
-        all(fields.get(field_name) == bundle[field_name] for field_name in CAMERA_OUTPUT_FIELDS)
-        for bundle in WIDE_ASPECT_UPRIGHT_CAMERA_BUNDLES
-    )
-
-
-def _normalize_wide_aspect_camera(
-    rng: random.Random,
-    resolved: Dict[str, str],
-) -> None:
-    """Force a resolved 21:9 result into a subject-filling camera setup."""
-    if resolved.get("画面比例") != WIDE_ASPECT:
-        return
-
-    base_pose = resolved.get("基础姿态", "")
-    if base_pose in LYING_POSES:
-        if _wide_aspect_compatible(resolved):
-            return
-    elif _wide_aspect_upright_fill_frame_ok(resolved):
-        return
-
-    if base_pose in LYING_POSES:
-        candidates = [
-            bundle for bundle in CAMERA_BUNDLES
-            if _wide_aspect_bundle_ok(bundle, base_pose)
-        ]
-    else:
-        # 竖直主体必须使用近景/居中中近景；绝不回退到全身、环境或动态
-        # 全身构图，否则 21:9 两侧会留下足够空间让模型重复同一个人物。
-        candidates = list(WIDE_ASPECT_UPRIGHT_CAMERA_BUNDLES)
-
-    if not candidates:
-        raise ValueError("No subject-filling camera bundle is available for 21:9")
-
-    selected_bundle = rng.choice(candidates)
-    for field_name in CAMERA_OUTPUT_FIELDS:
-        resolved[field_name] = selected_bundle[field_name]
-
-
-# 21:9 的超宽画幅会把背景里“路人/人群”一类的文本直接渲染成第二个可辨识
-# 人物。随机抽取场景时剔除这些选项；明确锁定仍保留用户自己的选择，由
-# 提示词里的单人约束兜底。
-WIDE_ASPECT_PEOPLE_PATTERNS = ("行人", "人群", "路人", "人头", "顾客")
-
-
-def _wide_aspect_scene_label_unsafe(field_name: str, label: str) -> bool:
-    """Whether a resolved scene label would render other people into the frame."""
-    if label in (EMPTY_CHOICE, FOLLOW_PRESET):
-        return False
-    text = FIELD_TEXT.get(field_name, {}).get(label, label)
-    return any(pattern in text for pattern in WIDE_ASPECT_PEOPLE_PATTERNS)
-
-
-_WIDE_ASPECT_SCENE_FIELDS = (
-    "场景地点", "背景环境", "环境细节", "时间切片", "场景大类",
-)
-
-
-def _wide_aspect_scene_bundle_ok(bundle: Mapping[str, str]) -> bool:
-    """Whether a scene bundle keeps the 21:9 banner free of other people."""
-    return not any(
-        _wide_aspect_scene_label_unsafe(field_name, bundle.get(field_name, ""))
-        for field_name in _WIDE_ASPECT_SCENE_FIELDS
-    )
-
-
-def _wide_aspect_scene_ok(fields: Mapping[str, str]) -> bool:
-    """Whether the resolved scene fields keep the 21:9 banner single-person."""
-    return not any(
-        _wide_aspect_scene_label_unsafe(field_name, fields.get(field_name, ""))
-        for field_name in _WIDE_ASPECT_SCENE_FIELDS
-    )
 
 THEME_CATEGORY_FIELD_POOLS = {
     "日常生活": {
@@ -2695,30 +2546,6 @@ BRIEF_FIELD_TEXT: Dict[str, Dict[str, str]] = {
         "高级灰黑白配色": "高级灰、黑色与柔白色",
         "木色墨黑米白": "低饱和木色、墨黑与米白色",
     },
-    "瞳色": {
-        "深棕色": "深棕色瞳色",
-        "黑褐色": "黑褐色瞳色",
-        "浅棕色": "浅棕色瞳色",
-        "琥珀色": "琥珀色瞳色",
-        "灰色": "灰色瞳色",
-        "蓝色": "蓝色瞳色",
-        "绿色": "绿色瞳色",
-        "榛褐色": "榛褐色瞳色",
-        "金棕色": "金棕色瞳色",
-        "蜂蜜金色": "蜂蜜金色瞳色",
-        "橄榄绿色": "橄榄绿瞳色",
-        "海蓝色": "海蓝色瞳色",
-        "冰蓝色": "冰蓝色瞳色",
-        "青灰色": "青灰色瞳色",
-        "银灰色": "银灰色瞳色",
-        "紫灰色": "紫灰色瞳色",
-        "深紫色": "深紫色瞳色",
-        "玫瑰粉色": "玫瑰粉色瞳色",
-        "异色瞳（左右不同色）": "左右不同色的异色瞳",
-        "异色瞳（左蓝右棕）": "左蓝右棕异色瞳",
-        "异色瞳（左绿右琥珀）": "左绿右琥珀异色瞳",
-        "异色瞳（左灰右蓝）": "左灰右蓝异色瞳",
-    },
 }
 
 _PERSON_STANDARD_PREFIXES = {
@@ -3221,9 +3048,6 @@ def resolve_fields(
                     or scene_category_or_profile_bundles
                 )
 
-        if group_fields == CAMERA_OUTPUT_FIELDS:
-            bundles = _wide_aspect_camera_bundles(bundles, resolved, random_fields)
-
         if group_fields == LIGHTING_OUTPUT_FIELDS:
             scene_bundles = _scene_compatible_lighting_plans(selected_scene_bundle)
             if scene_bundles:
@@ -3344,25 +3168,6 @@ def resolve_fields(
                     global_bundles, group_fields, resolved, random_fields
                 )
             candidates = candidates or list(bundles)
-        if (
-            group_fields == SCENE_GROUP_FIELDS
-            and resolved.get("画面比例") == WIDE_ASPECT
-        ):
-            # 21:9 锁定时，场景候选剔除文本里会出现路人/人群的选项，
-            # 否则超宽画幅容易把它们渲染成第二个可辨识人物。
-            safe_candidates = [
-                bundle for bundle in candidates
-                if _wide_aspect_scene_bundle_ok(bundle)
-            ]
-            if not safe_candidates and not explicit_scene_locks:
-                # 主题限定场景全部带路人/人群时，回落到通用的安全场景，
-                # 而不是保留会把第二个人渲染进画面的街道场景。
-                safe_candidates = [
-                    bundle
-                    for bundle in (*global_bundles, *ALL_LOCATION_THEME_SCENE_BUNDLES)
-                    if _wide_aspect_scene_bundle_ok(bundle)
-                ]
-            candidates = safe_candidates or list(candidates)
         selected_bundle = rng.choice(candidates)
         if group_fields == SCENE_GROUP_FIELDS:
             for field_name in SCENE_GROUP_FIELDS:
@@ -3397,16 +3202,6 @@ def resolve_fields(
                 elif requested_aspect == LANDSCAPE_RANDOM:
                     aspect_pool = [
                         value for value in aspect_pool if value in LANDSCAPE_ASPECTS
-                    ]
-                # 21:9 只有在已解析字段能让人物占满横幅、且场景文本不会
-                # 渲染出路人/人群时才进入随机池，否则超宽画幅的大片空白
-                # 很容易被模型填入第二个人物。
-                if not (
-                    _wide_aspect_compatible(resolved)
-                    and _wide_aspect_scene_ok(resolved)
-                ):
-                    aspect_pool = [
-                        value for value in aspect_pool if value != WIDE_ASPECT
                     ]
                 resolved[field_name] = rng.choice(aspect_pool)
             elif field_name == "头部配饰":
@@ -3546,19 +3341,6 @@ def resolve_fields(
     elif resolved["画面比例"] in PORTRAIT_ASPECTS:
         orientation_bundles = PORTRAIT_CAMERA_BUNDLES
     if orientation_bundles and active_oriented_camera:
-        if resolved["画面比例"] == WIDE_ASPECT:
-            # 21:9 needs the subject to fill the banner, so draw from the
-            # global pool of near or centered setups instead of the
-            # environmental landscape pool that would leave lateral voids.
-            wide_pool = [
-                bundle
-                for bundle in CAMERA_BUNDLES
-                if _wide_aspect_bundle_ok(
-                    bundle, resolved.get("基础姿态", "")
-                )
-            ]
-            if wide_pool:
-                orientation_bundles = wide_pool
         if random_scope == RANDOM_SCOPES[2]:
             category_camera = THEME_CATEGORY_CAMERA_BUNDLES.get(
                 resolved.get("写真大类", ""), CAMERA_BUNDLES
@@ -3581,10 +3363,6 @@ def resolve_fields(
         for field_name in active_oriented_camera:
             resolved[field_name] = selected_bundle[field_name]
 
-    # 最终兜底：前面的相机分组与方向校正只会重选随机字段；这里对完整
-    # 的已解析结果进行硬校正，避免跟随预设、旧工作流或手动全身构图绕过
-    # 21:9 的主体撑满画幅规则。
-    _normalize_wide_aspect_camera(rng, resolved)
     return resolved
 
 
@@ -3982,18 +3760,6 @@ _CAMERA_SHOT_STANDARD = {
 }
 
 
-def _wide_aspect_fill_frame_text(density: str) -> str:
-    """Tell the model how an upright subject should occupy a 21:9 banner."""
-    if density == "精简":
-        return "主体横向占据画面主要宽度，贴近边缘裁切"
-    if density == "详细":
-        return (
-            "主体以近距离横向展开的紧凑构图占据画面绝大部分宽度，"
-            "人物轮廓贴近左右画面边缘，两侧只保留少量背景"
-        )
-    return "主体横向占据画面主要宽度，左右仅保留少量背景，贴近边缘裁切"
-
-
 def _camera_prompt_text(fields: Mapping[str, str], density: str) -> str:
     """Compose atomic camera controls as one coherent photography clause."""
 
@@ -4007,8 +3773,6 @@ def _camera_prompt_text(fields: Mapping[str, str], density: str) -> str:
 
     if density == "详细":
         parts = []
-        if fields.get("画面比例") == WIDE_ASPECT:
-            parts.append(_wide_aspect_fill_frame_text(density))
         for field_name in CAMERA_OUTPUT_FIELDS:
             value = active.get(field_name)
             if not value:
@@ -4020,8 +3784,6 @@ def _camera_prompt_text(fields: Mapping[str, str], density: str) -> str:
         return "，".join(part.rstrip("，；。 ") for part in parts)
 
     parts = []
-    if fields.get("画面比例") == WIDE_ASPECT:
-        parts.append(_wide_aspect_fill_frame_text(density))
     if "景别" in active:
         parts.append(_CAMERA_SHOT_STANDARD.get(active["景别"], active["景别"]))
     if "画面布局" in active:
